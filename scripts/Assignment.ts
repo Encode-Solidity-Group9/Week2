@@ -15,8 +15,6 @@ async function main() {
     let accounts: Wallet[] = [];
     let provider: Provider;
     let minimumRequiredBalance= 0.01;
-    // let balance: BigNumber;
-    // let balanceInEth: string;
     
     provider = ethers.provider;
     if (!localDeploy) {
@@ -58,7 +56,6 @@ async function main() {
 
     if (proposals.length <= 0) throw new Error("not enough arguments");
 
-    // console.log("Arguments:", args);
     console.log("\nDeploying Ballot contract");
     console.log("Proposals: ");
 
@@ -98,22 +95,18 @@ async function main() {
     let receipt = await tx.wait();
     console.log(`Account 0 / (${accounts[0].address}) delegated the rights to: Account 2 / (${accounts[2].address})`); 
     console.log(`Transaction hash: ${receipt.transactionHash}`);
-    // console.log({receipt});
-    // console.log(`Tx cost: ${ethers.utils.formatEther(Number(receipt.cumulativeGasUsed) * Number(receipt.effectiveGasPrice))} ETH`);
 
     // casting votes
     console.log("\nCasting votes");
 
     let voted_to = 1;
     tx = await ballotContract.connect(accounts[1]).vote(1);
-    // console.log(`${accounts[1].address} voted for proposal ${voted_to} / ${proposals[voted_to]}`);
     console.log(`Account 1 / (${accounts[1].address}) voted for proposal ${voted_to} / ${ethers.utils.parseBytes32String((await ballotContract.proposals(voted_to)).name)}`);
     receipt = await tx.wait();
     console.log(`Transaction hash: ${receipt.transactionHash}`);
 
     voted_to = 2;
     tx = await ballotContract.connect(accounts[2]).vote(voted_to);
-    // console.log(`${accounts[2].address} voted for proposal ${voted_to} / ${proposals[voted_to]}`);
     console.log(`Account 2 / (${accounts[2].address}) voted for proposal ${voted_to} / ${ethers.utils.parseBytes32String((await ballotContract.proposals(voted_to)).name)}`);
     receipt = await tx.wait();
     console.log(`Transaction hash: ${receipt.transactionHash}`);
