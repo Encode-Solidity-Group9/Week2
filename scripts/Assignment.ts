@@ -85,18 +85,20 @@ async function main() {
     console.log("\nGiving voting rights to the other accounts");
     for (let index = 1; index < numberOfWallets; index++) {
         let tx = await ballotContract.connect(accounts[0]).giveRightToVote(accounts[index].address, {gasPrice: gasPrice});
-        let receipt = await tx.wait();
         console.log(`Account ${index} - (${accounts[index].address}) has been given voting rights`);
-        console.log(`Transaction hash: ${receipt.transactionHash}`);
+        console.log(`Transaction hash: ${tx.hash}`);
+        let receipt = await tx.wait();
         // console.log(`Tx cost: ${ethers.utils.formatEther(Number(receipt.cumulativeGasUsed) * Number(receipt.effectiveGasPrice))} ETH`);
+        console.log(`Confirmed`);
     }
     
     // delegating votes 
     console.log("\nDelegating votes");
     let tx = await ballotContract.connect(accounts[0]).delegate(accounts[2].address, {gasPrice: gasPrice});
-    let receipt = await tx.wait();
     console.log(`Account 0 / (${accounts[0].address}) delegated the rights to: Account 2 / (${accounts[2].address})`); 
-    console.log(`Transaction hash: ${receipt.transactionHash}`);
+    console.log(`Transaction hash: ${tx.hash}`);
+    let receipt = await tx.wait();
+    console.log(`Confirmed`);
 
     // casting votes
     console.log("\nCasting votes");
@@ -104,14 +106,15 @@ async function main() {
     let voted_to = 1;
     tx = await ballotContract.connect(accounts[1]).vote(1, {gasPrice: gasPrice});
     console.log(`Account 1 / (${accounts[1].address}) voted for proposal ${voted_to} / ${ethers.utils.parseBytes32String((await ballotContract.proposals(voted_to)).name)}`);
+    console.log(`Transaction hash: ${tx.hash}`);
     receipt = await tx.wait();
-    console.log(`Transaction hash: ${receipt.transactionHash}`);
+    console.log(`Confirmed`);
 
     voted_to = 2;
     tx = await ballotContract.connect(accounts[2]).vote(voted_to, {gasPrice: gasPrice});
     console.log(`Account 2 / (${accounts[2].address}) voted for proposal ${voted_to} / ${ethers.utils.parseBytes32String((await ballotContract.proposals(voted_to)).name)}`);
+    console.log(`Transaction hash: ${tx.hash}`);
     receipt = await tx.wait();
-    console.log(`Transaction hash: ${receipt.transactionHash}`);
     
     // querying results
     let winnerName = await ballotContract.winnerName();
